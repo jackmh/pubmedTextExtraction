@@ -1,13 +1,14 @@
 #encoding: utf-8
-#!/usr/bin/env python
-'''
-Created on Dec 2, 2014
+#-------------------------------------------------------------------------------
+# Name:        preprocessing
+# Purpose:
+# Author:      jack_mhdong
+# Created:     02-Dec-2014
+# Copyright:   (c) jack_mhdong 2014
+#-------------------------------------------------------------------------------
 
-@author: jack
-'''
 import os
 from config import config
-from operator import delitem
 
 """
 Check the sub proteins is in string with delimeter
@@ -361,7 +362,11 @@ def getDictWithGeneAsKeyProteins_GeneSynonymsAdValues(proteinGeneFname, geneAndI
                 allValueList = line.split('\t')
                 GeneAsKey = allValueList[1].strip()
                 geneSynonyms = allValueList[2].strip()
-                keyValues = geneSynonyms + '\t-'
+                '''
+                    delete the integer num and length lower than 2.
+                '''
+                newGeneSynonyms = getNewGeneSynonyms(geneSynonyms, '|')
+                keyValues = newGeneSynonyms + '\t-'
                 '''
                     check current key value in the keys dict.
                     if in it, we mush update the corrsponding keyValues
@@ -376,19 +381,20 @@ def getDictWithGeneAsKeyProteins_GeneSynonymsAdValues(proteinGeneFname, geneAndI
                     proteinsValues = valuesInDictList[0].strip()
                     otherGeneSynonyms = valuesInDictList[1].strip()
                     ## if the gene synonyms is '-'
-                    if (geneSynonyms == '-'):
+                    if (newGeneSynonyms == '-'):
                         keyValues = otherGeneSynonyms + '\t' + proteinsValues
                     else:
                         if (otherGeneSynonyms == '-'):
-                            keyValues = geneSynonyms + '\t' + proteinsValues
+                            keyValues = newGeneSynonyms + '\t' + proteinsValues
                         else:
                             allGeneSynList = otherGeneSynonyms.split('|')
-                            newGeneValues = geneSynonyms
+                            newGeneValues = newGeneSynonyms
                             for gene in allGeneSynList:
                                 gene = gene.strip()
-                                if (0 == isGeneInSynonymsStr(gene, geneSynonyms, '|')):
+                                if (0 == isGeneInSynonymsStr(gene, newGeneSynonyms, '|')):
                                     newGeneValues += "|" + gene
                                     pass
+                            newGeneValues = getNewGeneSynonyms(newGeneValues, '|')
                             keyValues = newGeneValues + '\t' + proteinsValues
                             pass
                         pass
@@ -407,6 +413,38 @@ def getDictWithGeneAsKeyProteins_GeneSynonymsAdValues(proteinGeneFname, geneAndI
     else:
         print("file: [%s] isn't existed." % proteinGeneFname)
     return None
+
+'''
+    Determine whether the number
+'''
+def is_number(strTmp):
+    try:
+        float(strTmp) # for int, long, float
+    except ValueError:
+        try:
+            complex(strTmp) # for complex
+        except ValueError:
+            return False
+    return True
+
+'''
+2|3|AAC3|ANT|ANT ----> AAC3|ANT|ANT
+'''
+def getNewGeneSynonyms(preSynonyms, delimeter):
+    if (preSynonyms == '-'):
+        return preSynonyms
+    synonymList = preSynonyms.split(delimeter)
+    newSynonym = '-'
+    firstFlag = True
+    for synonym in synonymList:
+        if (len(synonym) <= 2 or is_number(synonym) == True):
+            continue
+        if (firstFlag == True):
+            newSynonym = synonym
+            firstFlag = False
+            continue
+        newSynonym += '|' + synonym 
+    return newSynonym
 
 '''
     Whether the gene is in the string list geneSynonyms(split with delimeter) or not?
@@ -438,6 +476,8 @@ def buildDictGeneOFFicialAsValues(geneProteinFname):
                 allValueList = line.split('\t')
                 keyValue = allValueList[0].strip()
                 key = keyValue.lower()
+                if (len(key) <= 2 or is_number(key) == True):
+                    continue
                 if (key not in geneSynonymsProtein2GeneDict.keys()):
                     geneSynonymsProtein2GeneDict[key] = keyValue
                 geneSynonyms = allValueList[1]
@@ -449,16 +489,27 @@ def buildDictGeneOFFicialAsValues(geneProteinFname):
         pass
     return geneSynonymsProtein2GeneDict
 
+'''
+insert GeneSynonyms(split with char '|') into geneSynonymsProtein2GeneDict
+(key: geneSynonym, value: gene)
+'''
 def insertGeneSynonmsIntoDict(geneSynonyms, delimeter, keyValue, geneSynonymsProtein2GeneDict):
     GeneList = geneSynonyms.split(delimeter)
     for gene in GeneList:
         key = gene.lower()
+        if (len(key) <= 2 or is_number(key) == True):
+            continue
         if (key not in geneSynonymsProtein2GeneDict.keys()):
             geneSynonymsProtein2GeneDict[key] = keyValue
             pass
         pass
     pass
 
+'''
+insert Protein and alternative names(split with delimeter) with it's shortname(split with char '#')
+    into geneSynonymsProtein2GeneDict
+(key: protein, value: gene)
+'''
 def insertProteinIntoDict(proteins, delimeter, keyValue, geneSynonymsProtein2GeneDict):
     proteinList = proteins.split(delimeter)
     curProteinSet = set()
@@ -470,6 +521,9 @@ def insertProteinIntoDict(proteins, delimeter, keyValue, geneSynonymsProtein2Gen
             ## Get the first half elems if the full protein too long
             ## halfProtein = GetHalfLenOfProtein(protein, ' ')
             halfProtein = protein.strip()
+            ## escape the len <= 2 or number
+            if (len(halfProtein) <= 2 or is_number(halfProtein) == True):
+                continue
             curProteinSet.add(halfProtein)
             pass
         pass
@@ -483,9 +537,9 @@ def insertProteinIntoDict(proteins, delimeter, keyValue, geneSynonymsProtein2Gen
     pass
 
 ## Get the half length of fullProtein name with split char FS
-def GetHalfLenOfProtein(FullProteinName, FS):                                                             
+def GetHalfLenOfProtein(FullProteinName, dlimeter):                                                             
     newHalfProteinName = ''
-    proteinList = FullProteinName.split(FS)
+    proteinList = FullProteinName.split(dlimeter)
     ## if the length is 1 or 2, the new string is the original string
     ## else, the return string is half length of the original string
     numOfElem = (len(proteinList) + 1)/2

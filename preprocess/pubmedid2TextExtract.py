@@ -1,10 +1,12 @@
 #encoding: utf-8
-#!/usr/bin/env python
-'''
-Created on Dec 2, 2014
+#-------------------------------------------------------------------------------
+# Name:        preprocessing
+# Purpose:
+# Author:      jack_mhdong
+# Created:     02-Dec-2014
+# Copyright:   (c) jack_mhdong 2014
+#-------------------------------------------------------------------------------
 
-@author: jack
-'''
 import sys
 sys.path.append("/home/jack/Workspaces/pubmedExtraction")
 from config import config
@@ -29,15 +31,14 @@ if (para.__PUBMEDTEXTFLAG__ == True):
     saveAllSetValueIntoFname(uniquePubmedIdSet,
                                 para.unfindedPubmedIdInSrcTextFname,
                                 '# unfinded pubmedID (%d)\n' % len(uniquePubmedIdSet))
-
-
-if (para.__RESULTFLAG__ == True):
     saveAllDictValueIntoFname(pubmedInteractionProteinDict,
                                 para.pubmedid2Protein_201108,
                                 "# Pubmedid\tProt1|Prot2 (%d)\n" % len(pubmedInteractionProteinDict))
     print("Finish save pubmedid-protein into file %s" % para.pubmedid2Protein_201108)
     print("---------------------------------------------------\n")
     
+
+if (para.__RESULTFLAG__ == True):
     Protein2GeneDict = getOfficialProteinGene(para.proteinGeneFile, "\t", 1, 3)
     saveAllDictValueIntoFname(Protein2GeneDict,
                                 para.protein2Gene_201108,

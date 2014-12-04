@@ -1,8 +1,11 @@
 #encoding: utf-8
-'''
-Created on Dec 2, 2014
-@author: jack
-'''
+#-------------------------------------------------------------------------------
+# Name:        preprocessing
+# Purpose:
+# Author:      jack_mhdong
+# Created:     02-Dec-2014
+# Copyright:   (c) jack_mhdong 2014
+#-------------------------------------------------------------------------------
 
 class Parameter:
     def __init__(self):
@@ -37,7 +40,7 @@ class Parameter:
         self.__RESULTFLAG__ = False
         self.preliminaryResultDir = self.BaseDir + u'Workspaces/expPPI/resultData/'
         ''' 蛋白质对应的基因文件，相当于字典(key: Protein, value: Gene) '''
-        self.protein2Gene_201108 = self.preliminaryResultDir + u'protein2Gene_201108.intm'
+        self.protein2Gene_201108 = self.srcFileDir + u'protein2Gene_201108.intm'
         ''' 包含相互作用的蛋白质的pubmed id '''
         self.uniquePubmedid_201108 = self.preliminaryResultDir + u'uniquePubmedId_201108.intm'
         ''' 包含pubmed id中对应的蛋白质相互作用对，字典(key: pubmedid, value: protein interaction pair) '''
@@ -59,14 +62,14 @@ class Parameter:
         self.unfindedPubmedIdInSrcTextFname = self.preliminaryResultDir + u'unFindedPubmedIdTextFromSrcData.intm'
         ############################################################################################
         
-        self.__GENEPROTEINSUM__ = False
+        self.__GENEPROTEINSUM__ = True
         '''汇总所有的基因和对应的蛋白质， 输入包含两个文件
             proteinGene_201108.intm: 包含所有的蛋白质，全称，缩写和对应的Gene (scrapy) (self.proteinGeneFile)
             simpleGeneInfo.HomoSapiens: 包含人类所有的GeneID, Symbol, Gene Synonyms
             存入文件: geneProtein_HomoSapines.mergeSummarize (self.geneProtein_mergeSummarize)
         '''
         self.simpleGeneInfo_HomoSapiens = self.srcFileDir + u'simpleGeneInfo.HomoSapiens'
-        self.geneProtein_mergeSummarize = self.preliminaryResultDir + u'geneProtein_HomoSapines.mergeSummarize'
+        self.geneProtein_mergeSummarize = self.srcFileDir + u'geneProtein_HomoSapines.mergeSummarize'
         if (self.__TESTDEBUG__ == True):
             self.simpleGeneInfo_HomoSapiens = self.TestDir + u'simpleGeneInfo.HomoSapiens'
             self.geneProtein_mergeSummarize = self.TestDir + u'geneProtein_HomoSapines.mergeSummarize'

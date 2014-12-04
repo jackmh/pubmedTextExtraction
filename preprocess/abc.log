@@ -116,3 +116,12 @@ Finish save proteinid-gene into file /home/jack/Workspaces/expPPI/resultData/pub
 Finish save proteinid which has not corresponding Gene. [/home/jack/Workspaces/expPPI/resultData/proteinHasnotCorrespondingGene.intm]
 ---------------------------------------------------
 
+Finish save Gene and Proteins. [/home/jack/Workspaces/expPPI/resultData/geneProtein_HomoSapines.mergeSummarize]
+---------------------------------------------------
+
+Finish preprocessing for Proteins and Gene (dict). [/home/jack/Workspaces/expPPI/resultData/dictOfAllMergeGeneProtein.name]
+---------------------------------------------------
+
+Finish preprocessing for Proteins and Gene (set). [/home/jack/Workspaces/expPPI/resultData/keysOfAllMergeGeneProteins.name]
+---------------------------------------------------
+

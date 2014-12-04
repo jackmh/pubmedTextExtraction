@@ -1,3 +1,4 @@
+#encoding: utf-8
 #-------------------------------------------------------------------------------
 # Name:        scrapy
 # Purpose:
@@ -5,7 +6,6 @@
 # Created:     07-09-2014
 # Copyright:   (c) jack_mhdong 2014
 #-------------------------------------------------------------------------------
-# -- coding: utf-8 --
 
 import threading
 import requests, time
@@ -312,7 +312,7 @@ def getAllProteinAndGene(srcFile):
             processingFileStr += ProteinName + ", "
             pass
         print("-"*20)
-        print("But release some error protein: %s", processingFileStr)
+        print("But release some error protein: %s" % processingFileStr)
         ## warnLogFile = BaseDir + u'Workspaces/expPPI/data/warningOfscrapyProteinGene.log'
         warnLogFile = BaseDir + u'Workspaces/expPPI/data/warningOfscrapyProteinGene.log'
         WriteConn = open(warnLogFile, 'w')
